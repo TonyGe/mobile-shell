@@ -1,10 +1,27 @@
 package com.dianping.mobile.framework.datatypes;
 
 import com.dianping.mobile.framework.base.datatypes.HttpCode;
-import com.dianping.mobile.framework.base.datatypes.StatusCode;
 import com.dianping.mobile.framework.base.datatypes.SimpleMsg;
+import com.dianping.mobile.framework.base.datatypes.StatusCode;
 
 public class CommonMobileResponse implements IMobileResponse {
+
+    private Object data;
+    private StatusCode statusCode = HttpCode.HTTPOK;
+
+    public CommonMobileResponse(Object data) {
+        this.data = data;
+        if (data instanceof SimpleMsg && ((SimpleMsg) data).getStatusCode() != null) {
+            this.statusCode = ((SimpleMsg) data).getStatusCode();
+        }
+    }
+
+
+    public CommonMobileResponse(Object data, StatusCode statusCode) {
+        this(data);
+        if (statusCode != null)
+            this.statusCode = statusCode;
+    }
 
     /**
      * 使用了自定义了statuscode的SimpleMsg响应
@@ -16,24 +33,6 @@ public class CommonMobileResponse implements IMobileResponse {
      */
     public static CommonMobileResponse simpleMsg(String title, String content, StatusCode statusCode) {
         return new CommonMobileResponse(new SimpleMsg(title, content), statusCode);
-    }
-
-    private Object data;
-
-    private StatusCode statusCode = HttpCode.HTTPOK;
-
-
-    public CommonMobileResponse(Object data) {
-        this.data = data;
-        if (data instanceof SimpleMsg && ((SimpleMsg) data).getStatusCode() != null) {
-            this.statusCode = ((SimpleMsg) data).getStatusCode();
-        }
-    }
-
-    public CommonMobileResponse(Object data, StatusCode statusCode) {
-        this(data);
-        if (statusCode != null)
-            this.statusCode = statusCode;
     }
 
     @Override

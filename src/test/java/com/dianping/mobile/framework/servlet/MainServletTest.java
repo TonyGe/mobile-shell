@@ -1,19 +1,20 @@
 package com.dianping.mobile.framework.servlet;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import javax.servlet.ServletContext;
-
-import com.dianping.mobile.base.datatypes.bean.ClientInfoRule;
-import com.dianping.mobile.framework.action.DefaultAction;
-import com.dianping.mobile.framework.annotation.Action;
+import com.dianping.mobile.core.enums.ClientType;
+import com.dianping.mobile.core.enums.Platform;
+import com.dianping.mobile.core.enums.Product;
+import com.dianping.mobile.framework.action.ActionFactory;
+import com.dianping.mobile.framework.action.IAction;
+import com.dianping.mobile.framework.base.datatypes.ErrorMsg;
+import com.dianping.mobile.framework.core.DefaultMobileContextBuilder;
+import com.dianping.mobile.framework.core.IMobileContextBuilder;
+import com.dianping.mobile.framework.core.IResponseFormatter;
 import com.dianping.mobile.framework.datatypes.*;
+import com.dianping.mobile.framework.exception.ApplicationRuntimeException;
+import com.dianping.mobile.framework.exception.BuildContextException;
+import com.dianping.mobile.framework.io.Formatter;
+import com.dianping.mobile.framework.io.ResponseContent;
 import com.dianping.mobile.framework.io.ResponseType;
 import org.easymock.EasyMock;
 import org.junit.Test;
@@ -27,307 +28,300 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletConfig;
 import org.springframework.mock.web.MockServletContext;
 
+import javax.servlet.ServletContext;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.HashMap;
 
-import com.dianping.mobile.base.datatypes.enums.ClientType;
-import com.dianping.mobile.base.datatypes.enums.Platform;
-import com.dianping.mobile.base.datatypes.enums.Product;
-import com.dianping.mobile.framework.action.ActionFactory;
-import com.dianping.mobile.framework.action.IAction;
-import com.dianping.mobile.framework.base.datatypes.ErrorMsg;
-import com.dianping.mobile.framework.core.DefaultMobileContextBuilder;
-import com.dianping.mobile.framework.core.IMobileContextBuilder;
-import com.dianping.mobile.framework.core.IResponseFormatter;
-import com.dianping.mobile.framework.exception.ApplicationRuntimeException;
-import com.dianping.mobile.framework.exception.BuildContextException;
-import com.dianping.mobile.framework.io.Formatter;
-import com.dianping.mobile.framework.io.ResponseContent;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ DefaultMobileContextBuilder.class, ActionFactory.class,
-		Formatter.class })
-@PowerMockIgnore({ "javax.crypto.*" })
+@PrepareForTest({DefaultMobileContextBuilder.class, ActionFactory.class,
+        Formatter.class})
+@PowerMockIgnore({"javax.crypto.*"})
 public class MainServletTest {
 
-	@Test
-	public void testHandleRequest() throws Exception {
-		PowerMock.mockStatic(DefaultMobileContextBuilder.class);
-		PowerMock.mockStatic(ActionFactory.class);
-		
-		MainServlet servlet = new MainServlet();
-		//Field field = MainServlet.class.getDeclaredField("contextBuilder");
-		ServletContext mockServletContext = new MockServletContext();
-		servlet.init(new MockServletConfig(mockServletContext));
-		MockHttpServletRequest request = new MockHttpServletRequest();
-		MockHttpServletResponse response = new MockHttpServletResponse();
-		
-		request.setRequestURI("/test/ut.yp");
-		request.setRemotePort(8080);
-		request.setContextPath("/test");
-		request.addHeader("User-Agent", "MApi 1.0 (com.dianping.v1 5.1; Android 2.2)");
+    @Test
+    public void testHandleRequest() throws Exception {
+        PowerMock.mockStatic(DefaultMobileContextBuilder.class);
+        PowerMock.mockStatic(ActionFactory.class);
+
+        MainServlet servlet = new MainServlet();
+        //Field field = MainServlet.class.getDeclaredField("contextBuilder");
+        ServletContext mockServletContext = new MockServletContext();
+        servlet.init(new MockServletConfig(mockServletContext));
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        request.setRequestURI("/test/ut.yp");
+        request.setRemotePort(8080);
+        request.setContextPath("/test");
+        request.addHeader("User-Agent", "MApi 1.0 (com.dianping.v1 5.1; Android 2.2)");
 
 
-		MobileContext context = new MobileContext();
-		context.setUserIp("127.0.0.1");
-		context.setUserAgent("");
-		context.setClient(new ClientType(Platform.iPhone, Product.API));
-		context.setVersion("1.0.0");
-		context.setHeader(new MobileHeader());
-		context.setParamtersMap(new HashMap<String, String>());
-		ArrayList<String> result = new ArrayList<String>();
-		result.add("test string1");
-		result.add("test string2");
-		final IMobileResponse mobileResponse = new CommonMobileResponse(result);
-		IAction mockAction = new IAction() {
-			
-			@Override
-			public String getActionKey() {
-				return "ut.yp";
-			}
-			
-			@Override
-			public IMobileResponse execute(IMobileContext context) {
-				return mobileResponse;
-			}
+        MobileContext context = new MobileContext();
+        context.setUserIp("127.0.0.1");
+        context.setUserAgent("");
+        context.setClient(new ClientType(Platform.iPhone, Product.API));
+        context.setVersion("1.0.0");
+        context.setHeader(new MobileHeader());
+        context.setParamtersMap(new HashMap<String, String>());
+        ArrayList<String> result = new ArrayList<String>();
+        result.add("test string1");
+        result.add("test string2");
+        final IMobileResponse mobileResponse = new CommonMobileResponse(result);
+        IAction mockAction = new IAction() {
 
-			@Override
-			public String getHttpType() {
-				// TODO Auto-generated method stub
-				return null;
-			}
+            @Override
+            public String getActionKey() {
+                return "ut.yp";
+            }
 
-			@Override
-			public boolean postCompressed() {
-				// TODO Auto-generated method stub
-				return false;
-			}
+            @Override
+            public IMobileResponse execute(IMobileContext context) {
+                return mobileResponse;
+            }
 
-			@Override
-			public boolean isCheckToken() {
-				return false;
-			}
+            @Override
+            public String getHttpType() {
+                // TODO Auto-generated method stub
+                return null;
+            }
 
-			@Override
-			public ResponseType getEncryption() {
-				return null;
-			}
-		};
-		EasyMock.expect(ActionFactory.createAction("ut.yp")).andReturn(mockAction);
-		
-		IMobileContextBuilder contextBuilder = EasyMock.createMock(IMobileContextBuilder.class);
+            @Override
+            public boolean postCompressed() {
+                // TODO Auto-generated method stub
+                return false;
+            }
+
+            @Override
+            public boolean isCheckToken() {
+                return false;
+            }
+
+            @Override
+            public ResponseType getEncryption() {
+                return null;
+            }
+        };
+        EasyMock.expect(ActionFactory.createAction("ut.yp")).andReturn(mockAction);
+
+        IMobileContextBuilder contextBuilder = EasyMock.createMock(IMobileContextBuilder.class);
 //		field.setAccessible(true);
 //		field.set(servlet, contextBuilder);
 //		EasyMock.expect(
 //				contextBuilder.buildContext(mockServletContext, request,
 //						true)).andReturn(context);
-		
-		
-		ResponseContent responseContent = Formatter.responseFormatter(result,
-				200, context.getClient(),null);
 
-		PowerMock.replayAll();
-		servlet.handleRequest(request, response, true);
-		assertNotNull(response.getContentAsByteArray());
-		assertEquals(responseContent.getContent().length, response.getContentLength());
-		PowerMock.verifyAll();
-	}
 
-	@Test
-	public void testHandleRequestWithRuntimeException() throws Exception {
-		MockHttpServletRequest request = new MockHttpServletRequest();
-		MockHttpServletResponse response = new MockHttpServletResponse();
-		request.setRequestURI("/test/ut.yp");
-		request.setRemotePort(8080);
-		request.setContextPath("/test");
-		PowerMock.mockStatic(DefaultMobileContextBuilder.class);
-		PowerMock.mockStatic(ActionFactory.class);
-		PowerMock.mockStatic(Formatter.class);
-		MainServlet mockServlet = new MainServlet();
-		ServletContext mockServletContext = new MockServletContext();
-		mockServlet.init(new MockServletConfig(mockServletContext));
+        ResponseContent responseContent = Formatter.responseFormatter(result,
+                200, context.getClient(), null);
 
-		// MobileContext context = new MobileContext();
-		// context.setUserIp("127.0.0.1");
-		// context.setUserAgent("");
-		// context.setClient(new ClientType(Platform.iPhone, Product.API));
-		// context.setVersion(new Version("1.0.0"));
-		// context.setHeader(new MobileHeader());
-		// EasyMock.expect(MobileContextBuilder.buildContext(mockServletContext,
-		// request, false))
-		// .andReturn(context);
+        PowerMock.replayAll();
+        servlet.handleRequest(request, response, true);
+        assertNotNull(response.getContentAsByteArray());
+        assertEquals(responseContent.getContent().length, response.getContentLength());
+        PowerMock.verifyAll();
+    }
 
-		EasyMock.expect(ActionFactory.createAction(EasyMock.isA(String.class)))
-				.andThrow(
-						new ApplicationRuntimeException("springContext == null"));
+    @Test
+    public void testHandleRequestWithRuntimeException() throws Exception {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        request.setRequestURI("/test/ut.yp");
+        request.setRemotePort(8080);
+        request.setContextPath("/test");
+        PowerMock.mockStatic(DefaultMobileContextBuilder.class);
+        PowerMock.mockStatic(ActionFactory.class);
+        PowerMock.mockStatic(Formatter.class);
+        MainServlet mockServlet = new MainServlet();
+        ServletContext mockServletContext = new MockServletContext();
+        mockServlet.init(new MockServletConfig(mockServletContext));
 
-		ResponseContent responseContent = new ResponseContent();
-		responseContent.setStatusCode(200);
-		responseContent.setContentType(ResponseContent.CONTENTTYPE_BINARY);
-		responseContent.setContent(new byte[100]);
-		EasyMock.expect(
-				Formatter.responseFormatter(EasyMock.isA(ErrorMsg.class),
-						EasyMock.anyInt(), EasyMock.isNull(ClientType.class),
-						EasyMock.isNull(String.class))).andReturn(
-				responseContent);
+        // MobileContext context = new MobileContext();
+        // context.setUserIp("127.0.0.1");
+        // context.setUserAgent("");
+        // context.setClient(new ClientType(Platform.iPhone, Product.API));
+        // context.setVersion(new Version("1.0.0"));
+        // context.setHeader(new MobileHeader());
+        // EasyMock.expect(MobileContextBuilder.buildContext(mockServletContext,
+        // request, false))
+        // .andReturn(context);
 
-		PowerMock.replayAll();
-		mockServlet.handleRequest(request, response, false);
-		assertNotNull(response.getContentAsByteArray());
-		PowerMock.verifyAll();
-	}
+        EasyMock.expect(ActionFactory.createAction(EasyMock.isA(String.class)))
+                .andThrow(
+                        new ApplicationRuntimeException("springContext == null"));
 
-	@Test
-	public void testHandleRequestWithBuildContextException() throws Exception {
-		MockHttpServletRequest request = new MockHttpServletRequest();
-		MockHttpServletResponse response = new MockHttpServletResponse();
-		request.setRequestURI("/test/ut.yp");
-		request.setRemotePort(8080);
-		request.setContextPath("/test");
-		PowerMock.mockStatic(DefaultMobileContextBuilder.class);
-		PowerMock.mockStatic(ActionFactory.class);
-		PowerMock.mockStatic(Formatter.class);
-		MainServlet mockServlet = new MainServlet();
-		ServletContext mockServletContext = new MockServletContext();
-		mockServlet.init(new MockServletConfig(mockServletContext));
+        ResponseContent responseContent = new ResponseContent();
+        responseContent.setStatusCode(200);
+        responseContent.setContentType(ResponseContent.CONTENTTYPE_BINARY);
+        responseContent.setContent(new byte[100]);
+        EasyMock.expect(
+                Formatter.responseFormatter(EasyMock.isA(ErrorMsg.class),
+                        EasyMock.anyInt(), EasyMock.isNull(ClientType.class),
+                        EasyMock.isNull(String.class))).andReturn(
+                responseContent);
 
-		IAction action = new IAction() {
+        PowerMock.replayAll();
+        mockServlet.handleRequest(request, response, false);
+        assertNotNull(response.getContentAsByteArray());
+        PowerMock.verifyAll();
+    }
 
-			@Override
-			public String getActionKey() {
-				// TODO Auto-generated method stub
-				return null;
-			}
+    @Test
+    public void testHandleRequestWithBuildContextException() throws Exception {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        request.setRequestURI("/test/ut.yp");
+        request.setRemotePort(8080);
+        request.setContextPath("/test");
+        PowerMock.mockStatic(DefaultMobileContextBuilder.class);
+        PowerMock.mockStatic(ActionFactory.class);
+        PowerMock.mockStatic(Formatter.class);
+        MainServlet mockServlet = new MainServlet();
+        ServletContext mockServletContext = new MockServletContext();
+        mockServlet.init(new MockServletConfig(mockServletContext));
 
-			@Override
-			public IMobileResponse execute(IMobileContext context) {
-				// TODO Auto-generated method stub
-				return null;
-			}
+        IAction action = new IAction() {
 
-			@Override
-			public String getHttpType() {
-				// TODO Auto-generated method stub
-				return null;
-			}
+            @Override
+            public String getActionKey() {
+                // TODO Auto-generated method stub
+                return null;
+            }
 
-			@Override
-			public boolean postCompressed() {
-				// TODO Auto-generated method stub
-				return false;
-			}
+            @Override
+            public IMobileResponse execute(IMobileContext context) {
+                // TODO Auto-generated method stub
+                return null;
+            }
 
-			@Override
-			public boolean isCheckToken() {
-				return false;
-			}
+            @Override
+            public String getHttpType() {
+                // TODO Auto-generated method stub
+                return null;
+            }
 
-			@Override
-			public ResponseType getEncryption() {
-				return null;
-			}
-		};
-		EasyMock.expect(ActionFactory.createAction(EasyMock.isA(String.class)))
-				.andReturn(action);
+            @Override
+            public boolean postCompressed() {
+                // TODO Auto-generated method stub
+                return false;
+            }
 
-		BuildContextException exception = new BuildContextException(
-				"useragent== null || deviceId == null");
-		
-		Field field = MainServlet.class.getDeclaredField("contextBuilder");
-		IMobileContextBuilder contextBuilder = EasyMock.createMock(IMobileContextBuilder.class);
-		field.setAccessible(true);
-		field.set(mockServlet, contextBuilder);
-		
-		
+            @Override
+            public boolean isCheckToken() {
+                return false;
+            }
+
+            @Override
+            public ResponseType getEncryption() {
+                return null;
+            }
+        };
+        EasyMock.expect(ActionFactory.createAction(EasyMock.isA(String.class)))
+                .andReturn(action);
+
+        BuildContextException exception = new BuildContextException(
+                "useragent== null || deviceId == null");
+
+        Field field = MainServlet.class.getDeclaredField("contextBuilder");
+        IMobileContextBuilder contextBuilder = EasyMock.createMock(IMobileContextBuilder.class);
+        field.setAccessible(true);
+        field.set(mockServlet, contextBuilder);
+
+
 //		EasyMock.expect(
 //				mockServlet.getContextBuilder().buildContext(context,mockServletContext, request,
 //						false)).andThrow(exception);
 
-		ResponseContent responseContent = new ResponseContent();
-		responseContent.setStatusCode(200);
-		responseContent.setContentType(ResponseContent.CONTENTTYPE_BINARY);
-		responseContent.setContent(new byte[100]);
-		
-		field = MainServlet.class.getDeclaredField("responseFormatter");
-		IResponseFormatter responseFormatter = EasyMock.createMock(IResponseFormatter.class);
-		field.setAccessible(true);
-		field.set(mockServlet, responseFormatter);
-		
-		EasyMock.expect(
-				responseFormatter.format(EasyMock.isA(Object.class),
-						EasyMock.anyInt(), EasyMock.isNull(IMobileContext.class))).andReturn(
-				responseContent);
+        ResponseContent responseContent = new ResponseContent();
+        responseContent.setStatusCode(200);
+        responseContent.setContentType(ResponseContent.CONTENTTYPE_BINARY);
+        responseContent.setContent(new byte[100]);
 
-		PowerMock.replayAll();
-		mockServlet.handleRequest(request, response, false);
-		assertNotNull(response.getContentAsByteArray());
-		PowerMock.verifyAll();
-	}
+        field = MainServlet.class.getDeclaredField("responseFormatter");
+        IResponseFormatter responseFormatter = EasyMock.createMock(IResponseFormatter.class);
+        field.setAccessible(true);
+        field.set(mockServlet, responseFormatter);
 
-	@Test
-	public void testTokenCheck() throws Exception {
-		PowerMock.mockStatic(DefaultMobileContextBuilder.class);
-		PowerMock.mockStatic(ActionFactory.class);
+        EasyMock.expect(
+                responseFormatter.format(EasyMock.isA(Object.class),
+                        EasyMock.anyInt(), EasyMock.isNull(IMobileContext.class))).andReturn(
+                responseContent);
 
-		MainServlet servlet = new MainServlet();
-		//Field field = MainServlet.class.getDeclaredField("contextBuilder");
-		ServletContext mockServletContext = new MockServletContext();
-		servlet.init(new MockServletConfig(mockServletContext));
-		MockHttpServletRequest request = new MockHttpServletRequest();
-		MockHttpServletResponse response = new MockHttpServletResponse();
+        PowerMock.replayAll();
+        mockServlet.handleRequest(request, response, false);
+        assertNotNull(response.getContentAsByteArray());
+        PowerMock.verifyAll();
+    }
 
-		request.setRequestURI("/test/ut.yp");
-		request.setRemotePort(8080);
-		request.setContextPath("/test");
-		request.addHeader("User-Agent", "MApi 1.0 (com.dianping.v1 5.1; Android 2.2)");
+    @Test
+    public void testTokenCheck() throws Exception {
+        PowerMock.mockStatic(DefaultMobileContextBuilder.class);
+        PowerMock.mockStatic(ActionFactory.class);
+
+        MainServlet servlet = new MainServlet();
+        //Field field = MainServlet.class.getDeclaredField("contextBuilder");
+        ServletContext mockServletContext = new MockServletContext();
+        servlet.init(new MockServletConfig(mockServletContext));
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        request.setRequestURI("/test/ut.yp");
+        request.setRemotePort(8080);
+        request.setContextPath("/test");
+        request.addHeader("User-Agent", "MApi 1.0 (com.dianping.v1 5.1; Android 2.2)");
 
 
-		MobileContext context = new MobileContext();
-		context.setUserIp("127.0.0.1");
-		context.setUserAgent("");
-		context.setClient(new ClientType(Platform.iPhone, Product.API));
-		context.setVersion("1.0.0");
-		context.setHeader(new MobileHeader());
-		context.setParamtersMap(new HashMap<String, String>());
-		ArrayList<String> result = new ArrayList<String>();
-		result.add("test string1");
-		result.add("test string2");
-		final IMobileResponse mobileResponse = new CommonMobileResponse(result);
-		IAction mockAction = new IAction() {
+        MobileContext context = new MobileContext();
+        context.setUserIp("127.0.0.1");
+        context.setUserAgent("");
+        context.setClient(new ClientType(Platform.iPhone, Product.API));
+        context.setVersion("1.0.0");
+        context.setHeader(new MobileHeader());
+        context.setParamtersMap(new HashMap<String, String>());
+        ArrayList<String> result = new ArrayList<String>();
+        result.add("test string1");
+        result.add("test string2");
+        final IMobileResponse mobileResponse = new CommonMobileResponse(result);
+        IAction mockAction = new IAction() {
 
-			@Override
-			public String getActionKey() {
-				return "ut.yp";
-			}
+            @Override
+            public String getActionKey() {
+                return "ut.yp";
+            }
 
-			@Override
-			public IMobileResponse execute(IMobileContext context) {
-				return mobileResponse;
-			}
+            @Override
+            public IMobileResponse execute(IMobileContext context) {
+                return mobileResponse;
+            }
 
-			@Override
-			public String getHttpType() {
-				// TODO Auto-generated method stub
-				return null;
-			}
+            @Override
+            public String getHttpType() {
+                // TODO Auto-generated method stub
+                return null;
+            }
 
-			@Override
-			public boolean postCompressed() {
-				// TODO Auto-generated method stub
-				return false;
-			}
+            @Override
+            public boolean postCompressed() {
+                // TODO Auto-generated method stub
+                return false;
+            }
 
-			@Override
-			public boolean isCheckToken() {
-				return false;
-			}
+            @Override
+            public boolean isCheckToken() {
+                return false;
+            }
 
-			@Override
-			public ResponseType getEncryption() {
-				return null;
-			}
-		};
-		EasyMock.expect(ActionFactory.createAction("ut.yp")).andReturn(mockAction);
+            @Override
+            public ResponseType getEncryption() {
+                return null;
+            }
+        };
+        EasyMock.expect(ActionFactory.createAction("ut.yp")).andReturn(mockAction);
 
-		IMobileContextBuilder contextBuilder = EasyMock.createMock(IMobileContextBuilder.class);
+        IMobileContextBuilder contextBuilder = EasyMock.createMock(IMobileContextBuilder.class);
 //		field.setAccessible(true);
 //		field.set(servlet, contextBuilder);
 //		EasyMock.expect(
@@ -335,13 +329,13 @@ public class MainServletTest {
 //						true)).andReturn(context);
 
 
-		ResponseContent responseContent = Formatter.responseFormatter(result,
-				200, context.getClient(),null);
+        ResponseContent responseContent = Formatter.responseFormatter(result,
+                200, context.getClient(), null);
 
-		PowerMock.replayAll();
-		servlet.handleRequest(request, response, true);
-		assertNotNull(response.getContentAsByteArray());
-		assertEquals(responseContent.getContent().length, response.getContentLength());
-		PowerMock.verifyAll();
-	}
+        PowerMock.replayAll();
+        servlet.handleRequest(request, response, true);
+        assertNotNull(response.getContentAsByteArray());
+        assertEquals(responseContent.getContent().length, response.getContentLength());
+        PowerMock.verifyAll();
+    }
 }

@@ -1,7 +1,8 @@
 package com.dianping.mobile.framework.clientrule.bean;
 
-import com.dianping.mobile.base.datatypes.enums.Platform;
-import com.dianping.mobile.base.datatypes.enums.Product;
+
+import com.dianping.mobile.core.enums.Platform;
+import com.dianping.mobile.core.enums.Product;
 import com.dianping.mobile.framework.annotation.MobileClientRule;
 import com.dianping.mobile.framework.annotation.MobileClientRules;
 import com.dianping.mobile.framework.annotation.MobileDo;
@@ -23,23 +24,23 @@ public class OneDo {
     @MobileField(key = 0x1235)
     private int field2;
 
-    @MobileClientRule(platforms = { Platform.Android, Platform.iPhone })
+    @MobileClientRule(platforms = {Platform.Android, Platform.iPhone})
     @MobileField(key = 0x1236)
     private int field3;
 
     @MobileClientRules({
-        @MobileClientRule(platforms = { Platform.Android, Platform.iPhone }, minVersion = "6.2"),
-        @MobileClientRule(platforms = Platform.iPadHd, minVersion = "2.6")
+            @MobileClientRule(platforms = {Platform.Android, Platform.iPhone}, minVersion = "6.2"),
+            @MobileClientRule(platforms = Platform.iPadHd, minVersion = "2.6")
     })
     @MobileField(key = 0x1237)
     private int field4;
 
     //MobileClientRules和MobileClientRule同时生效
     @MobileClientRules({
-        //会生成4个ClientInfoRule
+            //会生成4个ClientInfoRule
             //MAINAPP_ANDROID, MAINAPP_IPHONE
             //YPAPP_ANDROID, YPAPP_IPHONE
-        @MobileClientRule(platforms = { Platform.Android, Platform.iPhone }, products = { Product.API, Product.YELLOWPAGE })
+            @MobileClientRule(platforms = {Platform.Android, Platform.iPhone}, products = {Product.API, Product.YELLOWPAGE})
     })
     @MobileClientRule(platforms = Platform.iPadHd)
     @MobileField(key = 0x1238)

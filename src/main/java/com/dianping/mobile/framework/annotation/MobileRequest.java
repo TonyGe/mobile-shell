@@ -10,13 +10,13 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface MobileRequest {
 
-	@Retention(RetentionPolicy.RUNTIME)
-	@Target(ElementType.FIELD)
-	public @interface Param {
-		String name();
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.FIELD)
+    public @interface Param {
+        String name();
 
-		boolean required() default false;
+        boolean required() default false;
 
-		boolean validate() default true;
-	}
+        boolean validate() default true;
+    }
 }

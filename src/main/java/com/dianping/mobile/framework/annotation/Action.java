@@ -11,22 +11,22 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface Action {
 
-	String url();
-	
-	String httpType() default "";
-	
-	boolean postCompressed() default false;
+    String url();
 
-	/**
-	 * 是否对用户的Token进行验证
-	 */
-	boolean isCheckToken() default false;
+    String httpType() default "";
 
-	/**
-	 * 对于结果的处理方式
-	 */
-	ResponseType encryption() default ResponseType.MAPI;
+    boolean postCompressed() default false;
 
-	MobileClientRule[] mobileClientRule() default {};
+    /**
+     * 是否对用户的Token进行验证
+     */
+    boolean isCheckToken() default false;
+
+    /**
+     * 对于结果的处理方式
+     */
+    ResponseType encryption() default ResponseType.MAPI;
+
+    MobileClientRule[] mobileClientRule() default {};
 
 }

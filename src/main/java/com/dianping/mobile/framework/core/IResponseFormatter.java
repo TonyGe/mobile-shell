@@ -7,11 +7,11 @@ import com.dianping.mobile.framework.io.ResponseContent;
 
 public interface IResponseFormatter {
 
-	ResponseContent format(Object response, int statusCode,
-			IMobileContext context) throws ApplicationIOException,
-			ApplicationEncryptException;
+    ResponseContent format(Object response, int statusCode,
+                           IMobileContext context) throws ApplicationIOException,
+            ApplicationEncryptException;
 
-	ResponseContent format(Object response, int statusCode)
-			throws ApplicationIOException, ApplicationEncryptException;
+    ResponseContent format(Object response, int statusCode)
+            throws ApplicationIOException, ApplicationEncryptException;
 
 }

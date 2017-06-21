@@ -1,7 +1,6 @@
 package com.dianping.mobile.framework.base.datatypes;
 
 import com.dianping.mobile.framework.datatypes.IMobileResponse;
-import org.apache.http.HttpStatus;
 
 /**
  * 预定义的HTTP状态码

@@ -1,6 +1,6 @@
 package com.dianping.mobile.framework.clientrule.bean;
 
-import com.dianping.mobile.base.datatypes.enums.Platform;
+import com.dianping.mobile.core.enums.Platform;
 import com.dianping.mobile.framework.annotation.MobileClientRule;
 import com.dianping.mobile.framework.annotation.MobileDo;
 

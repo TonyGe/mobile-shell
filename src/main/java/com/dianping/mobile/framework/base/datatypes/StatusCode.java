@@ -54,6 +54,13 @@ public class StatusCode {
      * Pegion调用异常
      */
     public static StatusCode PEGIONEXCEPTION = new StatusCode(510);
+    static ThreadLocal<StatusCode> localcode = new ThreadLocal<StatusCode>();
+    private static Map<Integer, StatusCode> codes = new HashMap<Integer, StatusCode>();
+    private int code = 0;
+
+    StatusCode(int code) {
+        this.code = code;
+    }
 
     /**
      * 新建自定义的ERRORCODE，请优先使用预定义的错误码，如果没有，请使用5XX作为服务器异常进行扩展
@@ -68,21 +75,6 @@ public class StatusCode {
         return result;
     }
 
-    public int getCode() {
-        return code;
-    }
-
-    private int code = 0;
-
-    StatusCode(int code) {
-        this.code = code;
-    }
-
-    private static Map<Integer, StatusCode> codes = new HashMap<Integer, StatusCode>();
-
-    static ThreadLocal<StatusCode> localcode = new ThreadLocal<StatusCode>();
-
-
     /**
      * 在业务逻辑的分支中临时设置业务code
      * <p/>
@@ -96,5 +88,9 @@ public class StatusCode {
 
     public static void init() {
         localcode.set(null);
+    }
+
+    public int getCode() {
+        return code;
     }
 }

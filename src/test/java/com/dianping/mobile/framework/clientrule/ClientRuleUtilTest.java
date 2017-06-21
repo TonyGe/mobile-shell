@@ -1,7 +1,8 @@
 package com.dianping.mobile.framework.clientrule;
 
-import com.dianping.mobile.base.datatypes.bean.ClientInfoRule;
-import com.dianping.mobile.base.datatypes.enums.ClientType;
+
+import com.dianping.mobile.core.datatypes.ClientInfoRule;
+import com.dianping.mobile.core.enums.ClientType;
 import com.dianping.mobile.framework.clientrule.bean.OneDo;
 import com.dianping.mobile.framework.clientrule.bean.ThreeDo;
 import com.dianping.mobile.framework.util.ClientRuleUtil;
@@ -35,26 +36,26 @@ public class ClientRuleUtilTest {
     public void test() {
         Class<OneDo> clazz = OneDo.class;
 
-        for(Field field : clazz.getDeclaredFields()) {
+        for (Field field : clazz.getDeclaredFields()) {
             List<ClientInfoRule> rules = ClientRuleUtil.getClientInfoRules(field);
-            if(field.getName().equals("field")) {
+            if (field.getName().equals("field")) {
 
                 Assert.assertEquals(1, rules.size());
                 Assert.assertEquals(ClientType.MAINAPP_ANDROID, rules.get(0).getClientType());
 
-            } else if(field.getName().equals("field2")) {
+            } else if (field.getName().equals("field2")) {
 
                 Assert.assertEquals(1, rules.size());
                 Assert.assertEquals(ClientType.YPAPP_IPHONE, rules.get(0).getClientType());
                 Assert.assertEquals("6.2", rules.get(0).getMinVersion());
 
-            } else if(field.getName().equals("field3")) {
+            } else if (field.getName().equals("field3")) {
 
                 Assert.assertEquals(2, rules.size());
                 Assert.assertEquals(ClientType.MAINAPP_ANDROID, rules.get(0).getClientType());
                 Assert.assertEquals(ClientType.MAINAPP_IPHONE, rules.get(1).getClientType());
 
-            } else if(field.getName().equals("field4")) {
+            } else if (field.getName().equals("field4")) {
 
                 Assert.assertEquals(3, rules.size());
                 Assert.assertEquals(ClientType.MAINAPP_ANDROID, rules.get(0).getClientType());
@@ -64,7 +65,7 @@ public class ClientRuleUtilTest {
                 Assert.assertEquals(ClientType.MAINAPP_IPADHD, rules.get(2).getClientType());
                 Assert.assertEquals("2.6", rules.get(2).getMinVersion());
 
-            } else if(field.getName().equals("field5")) {
+            } else if (field.getName().equals("field5")) {
 
                 Assert.assertEquals(5, rules.size());
                 Assert.assertEquals(ClientType.MAINAPP_IPADHD, rules.get(0).getClientType());

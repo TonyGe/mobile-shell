@@ -5,16 +5,16 @@ import com.dianping.mobile.framework.datatypes.IMobileResponse;
 import com.dianping.mobile.framework.io.ResponseType;
 
 public interface IAction {
-	
-	String getActionKey();
-	
-	String getHttpType();
-	
-	boolean postCompressed();
 
-	boolean isCheckToken();
+    String getActionKey();
 
-	ResponseType getEncryption();
-	
-	IMobileResponse execute(IMobileContext context);
+    String getHttpType();
+
+    boolean postCompressed();
+
+    boolean isCheckToken();
+
+    ResponseType getEncryption();
+
+    IMobileResponse execute(IMobileContext context);
 }
